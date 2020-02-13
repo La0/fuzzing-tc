@@ -1,8 +1,13 @@
 # coding: utf-8
 import os
 import re
+from datetime import datetime
+from datetime import timedelta
 
 import yaml
+from taskcluster.utils import fromNow
+from taskcluster.utils import slugId
+from taskcluster.utils import stringDate
 from tcadmin.resources import Hook
 from tcadmin.resources import Role
 from tcadmin.resources import WorkerPool
@@ -331,6 +336,45 @@ class PoolConfiguration:
         )
 
         return [pool, hook, role]
+
+    def build_tasks(self, parent_task_id, task_group_id):
+        """Create fuzzing tasks and attach them to a decision task"""
+        now = datetime.utcnow()
+        for i in range(1, self.tasks + 1):
+            task_id = slugId()
+            task = {
+                "taskGroupId": task_group_id,
+                "dependencies": [parent_task_id],
+                "created": stringDate(now),
+                "deadline": stringDate(now + timedelta(seconds=self.cycle_time)),
+                "expires": fromNow("1 month", now),
+                "extra": {},
+                "metadata": {
+                    "description": DESCRIPTION,
+                    "name": f"Fuzzing task {self.id} - {i}/{self.tasks}",
+                    "owner": OWNER_EMAIL,
+                    "source": "https://github.com/MozillaSecurity/fuzzing-tc",
+                },
+                "payload": {
+                    "artifacts": {},
+                    "cache": {},
+                    "capabilities": {},
+                    "env": {},
+                    "features": {"taskclusterProxy": True},
+                    "image": self.container,
+                    "maxRunTime": self.cycle_time,
+                },
+                "priority": "high",
+                "provisionerId": PROVISIONER_ID,
+                "workerType": self.id,
+                "retries": 1,
+                "routes": [],
+                "schedulerId": SCHEDULER_ID,
+                "scopes": self.scopes,
+                "tags": {},
+            }
+
+            yield task_id, task
 
     @classmethod
     def from_file(cls, pool_yml, _flattened=None):
