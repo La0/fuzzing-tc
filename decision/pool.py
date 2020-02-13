@@ -12,6 +12,7 @@ from tcadmin.resources import Hook
 from tcadmin.resources import Role
 from tcadmin.resources import WorkerPool
 
+from decision import DECISION_TASK_SECRET
 from decision import HOOK_PREFIX
 from decision import OWNER_EMAIL
 from decision import PROVIDER_IDS
@@ -274,9 +275,10 @@ class PoolConfiguration:
 
         # Mandatory scopes to execute the hook
         # or create new tasks
-        task_creation_scopes = (
+        decision_task_scopes = (
             f"queue:scheduler-id:{SCHEDULER_ID}",
             f"queue:create-task:highest:{PROVISIONER_ID}/{self.id}",
+            f"secrets:get:{DECISION_TASK_SECRET}",
         )
 
         # Build the decision task payload that will trigger the new fuzzing tasks
@@ -295,7 +297,7 @@ class PoolConfiguration:
                 "artifacts": {},
                 "cache": {},
                 "capabilities": {},
-                "env": {},
+                "env": {"TASKCLUSTER_SECRET": DECISION_TASK_SECRET},
                 "features": {"taskclusterProxy": True},
                 "image": {
                     "type": "indexed-image",
@@ -311,7 +313,7 @@ class PoolConfiguration:
             "retries": 1,
             "routes": [],
             "schedulerId": SCHEDULER_ID,
-            "scopes": self.scopes,
+            "scopes": decision_task_scopes,
             "tags": {},
         }
 
@@ -340,7 +342,7 @@ class PoolConfiguration:
         role = Role(
             roleId=f"hook-id:{HOOK_PREFIX}/{self.id}",
             description=DESCRIPTION,
-            scopes=tuple(self.scopes) + task_creation_scopes,
+            scopes=tuple(self.scopes) + decision_task_scopes,
         )
 
         return [pool, hook, role]

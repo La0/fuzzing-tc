@@ -76,7 +76,7 @@ VALID_HOOK = {
             "artifacts": {},
             "cache": {},
             "capabilities": {},
-            "env": {},
+            "env": {"TASKCLUSTER_SECRET": "project/fuzzing/decision"},
             "features": {"taskclusterProxy": True},
             "image": {
                 "namespace": "project.fuzzing.config.pull_request.decision",
@@ -90,7 +90,11 @@ VALID_HOOK = {
         "retries": 1,
         "routes": [],
         "schedulerId": "-",
-        "scopes": [],
+        "scopes": [
+            "queue:scheduler-id:-",
+            "queue:create-task:highest:proj-fuzzing/linux-test",
+            "secrets:get:project/fuzzing/decision",
+        ],
         "tags": {},
         "workerType": "linux-test",
     },
@@ -106,6 +110,7 @@ VALID_ROLE = {
     "scopes": [
         "queue:create-task:highest:proj-fuzzing/linux-test",
         "queue:scheduler-id:-",
+        "secrets:get:project/fuzzing/decision",
     ],
     "description": "*DO NOT EDIT* - This resource is configured automatically.\n"
     "\n"
