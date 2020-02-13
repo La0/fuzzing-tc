@@ -47,7 +47,7 @@ def test_machine_filters(mock_machines, provider, cpu, ram, cores, metal, result
             list(mock_machines.filter(provider, cpu, cores, ram, metal))
 
 
-def test_aws_resources(mock_aws, mock_machines):
+def test_aws_resources(mock_clouds, mock_machines):
 
     conf = PoolConfiguration(
         "test",
@@ -70,7 +70,7 @@ def test_aws_resources(mock_aws, mock_machines):
             "macros": {},
         },
     )
-    resources = conf.build_resources(mock_aws, mock_machines)
+    resources = conf.build_resources(mock_clouds, mock_machines)
     assert len(resources) == 3
     pool, hook, role = resources
 
