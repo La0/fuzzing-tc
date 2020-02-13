@@ -272,14 +272,22 @@ class PoolConfiguration:
             ),
         }
 
-        task = {
+        # Mandatory scopes to execute the hook
+        # or create new tasks
+        task_creation_scopes = (
+            f"queue:scheduler-id:{SCHEDULER_ID}",
+            f"queue:create-task:highest:{PROVISIONER_ID}/{self.id}",
+        )
+
+        # Build the decision task payload that will trigger the new fuzzing tasks
+        decision_task = {
             "created": {"$fromNow": "0 seconds"},
-            "deadline": {"$fromNow": f"{self.cycle_time} seconds"},
+            "deadline": {"$fromNow": "1 hour"},
             "expires": {"$fromNow": "1 month"},
             "extra": {},
             "metadata": {
                 "description": DESCRIPTION,
-                "name": f"Fuzzing task {self.id}",
+                "name": f"Fuzzing decision {self.id}",
                 "owner": OWNER_EMAIL,
                 "source": "https://github.com/MozillaSecurity/fuzzing-tc",
             },
@@ -289,8 +297,13 @@ class PoolConfiguration:
                 "capabilities": {},
                 "env": {},
                 "features": {"taskclusterProxy": True},
-                "image": self.container,
-                "maxRunTime": self.cycle_time,
+                "image": {
+                    "type": "indexed-image",
+                    "path": "public/fuzzing-tc-decision.tar",
+                    # TODO: switch to master branch
+                    "namespace": "project.fuzzing.config.pull_request.decision",
+                },
+                "maxRunTime": 3600,
             },
             "priority": "high",
             "provisionerId": PROVISIONER_ID,
@@ -319,7 +332,7 @@ class PoolConfiguration:
             owner=OWNER_EMAIL,
             emailOnError=True,
             schedule=(),  # TODO
-            task=task,
+            task=decision_task,
             bindings=(),
             triggerSchema={},
         )
@@ -327,12 +340,7 @@ class PoolConfiguration:
         role = Role(
             roleId=f"hook-id:{HOOK_PREFIX}/{self.id}",
             description=DESCRIPTION,
-            scopes=tuple(self.scopes)
-            + (
-                # Mandatory scopes to execute the hook
-                f"queue:scheduler-id:{SCHEDULER_ID}",
-                f"queue:create-task:highest:{PROVISIONER_ID}/{self.id}",
-            ),
+            scopes=tuple(self.scopes) + task_creation_scopes,
         )
 
         return [pool, hook, role]
