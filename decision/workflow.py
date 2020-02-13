@@ -165,13 +165,13 @@ class Workflow(object):
             rf"Role=hook-id:{HOOK_PREFIX}/.*",
         ]
 
-    def build_tasks(self, pool_name, task_id, task_group_id):
+    def build_tasks(self, pool_name, task_id):
         path = os.path.join(self.fuzzing_config_dir, f"{pool_name}.yml")
         assert os.path.exists(path), f"Missing pool {pool_name}"
 
         # Build tasks needed for a specific pool
         pool_config = PoolConfiguration.from_file(path)
-        tasks = pool_config.build_tasks(task_id, task_group_id)
+        tasks = pool_config.build_tasks(task_id)
 
         # Create all the tasks on taskcluster
         queue = taskcluster.get_service("queue")

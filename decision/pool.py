@@ -305,6 +305,7 @@ class PoolConfiguration:
                     # TODO: switch to master branch
                     "namespace": "project.fuzzing.config.pull_request.decision",
                 },
+                "command": ["fuzzing-decision", self.filename],
                 "maxRunTime": 3600,
             },
             "priority": "high",
@@ -347,13 +348,13 @@ class PoolConfiguration:
 
         return [pool, hook, role]
 
-    def build_tasks(self, parent_task_id, task_group_id):
+    def build_tasks(self, parent_task_id):
         """Create fuzzing tasks and attach them to a decision task"""
         now = datetime.utcnow()
         for i in range(1, self.tasks + 1):
             task_id = slugId()
             task = {
-                "taskGroupId": task_group_id,
+                "taskGroupId": parent_task_id,
                 "dependencies": [parent_task_id],
                 "created": stringDate(now),
                 "deadline": stringDate(now + timedelta(seconds=self.cycle_time)),

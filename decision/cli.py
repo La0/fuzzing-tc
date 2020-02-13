@@ -32,19 +32,11 @@ def main():
         help="Taskcluster decision task creating new fuzzing tasks",
         default=os.environ.get("TASK_ID"),
     )
-    parser.add_argument(
-        "--task-group-id",
-        type=str,
-        help="Taskcluster decision task group where the new tasks will be added",
-        default=os.environ.get("TASK_GROUP_ID"),
-    )
     args = parser.parse_args()
 
     # We need both task & task group information
     if not args.task_id:
         raise Exception("Missing decision task id")
-    if not args.task_group_id:
-        raise Exception("Missing decision task group id")
 
     # Configure workflow using the secret or local configuration
     workflow = Workflow()
@@ -56,4 +48,4 @@ def main():
     workflow.clone(config)
 
     # Build all task definitions for that pool
-    workflow.build_tasks(args.pool_name, args.task_id, args.task_group_id)
+    workflow.build_tasks(args.pool_name, args.task_id)

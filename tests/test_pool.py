@@ -83,6 +83,7 @@ VALID_HOOK = {
                 "path": "public/fuzzing-tc-decision.tar",
                 "type": "indexed-image",
             },
+            "command": ["fuzzing-decision", "test"],
             "maxRunTime": 3600,
         },
         "priority": "high",
