@@ -3,4 +3,4 @@
 
 regions:
   us-west1:
-    zones: ["a", "b"]
+    zones: ["a"]
