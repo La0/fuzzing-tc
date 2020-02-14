@@ -358,7 +358,7 @@ class PoolConfiguration:
                 "dependencies": [parent_task_id],
                 "created": stringDate(now),
                 "deadline": stringDate(now + timedelta(seconds=self.cycle_time)),
-                "expires": fromNow("1 month", now),
+                "expires": stringDate(fromNow("1 month", now)),
                 "extra": {},
                 "metadata": {
                     "description": DESCRIPTION,
