@@ -56,17 +56,17 @@ A Taskcluster secret is used by both modes to be able to clone private repositor
 # Repository with public base information for the Taskcluster instance
 community_config:
   url: 'https://github.com/mozilla/community-tc-config.git'
-	revision: master
+  revision: master
 
 # Repository with private fuzzing configuration
 fuzzing_config:
   url: 'git@github.com:project/repo.git'
-	revision: master
+  revision: master
 
 # This private key is used to clone private repositories
 private_key: |
   -----BEGIN OPENSSH PRIVATE KEY-----
-	XXXX
+  XXXX
   -----END OPENSSH PRIVATE KEY-----
 ```
 
