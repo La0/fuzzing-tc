@@ -81,7 +81,7 @@ VALID_HOOK = {
             "env": {"TASKCLUSTER_SECRET": "project/fuzzing/decision"},
             "features": {"taskclusterProxy": True},
             "image": {
-                "namespace": "project.fuzzing.config.pull_request.decision",
+                "namespace": "project.fuzzing.config.master",
                 "path": "public/fuzzing-tc-decision.tar",
                 "type": "indexed-image",
             },

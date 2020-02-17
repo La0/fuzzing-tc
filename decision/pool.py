@@ -302,8 +302,7 @@ class PoolConfiguration:
                 "image": {
                     "type": "indexed-image",
                     "path": "public/fuzzing-tc-decision.tar",
-                    # TODO: switch to master branch
-                    "namespace": "project.fuzzing.config.pull_request.decision",
+                    "namespace": "project.fuzzing.config.master",
                 },
                 "command": ["fuzzing-decision", self.filename],
                 "maxRunTime": 3600,
