@@ -156,7 +156,7 @@ On the community taskcluster instance, you need to prefix your client name with 
 
 Once your client is created, you'll get a client id and access token.
 
-You can then run `tc-adminb apply` with those credentials:
+You can then run `tc-admin apply` with those credentials:
 
 ```bash
 export TASKCLUSTER_CLIENT_ID="<your_client_id>"
